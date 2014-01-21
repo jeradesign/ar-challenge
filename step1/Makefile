@@ -6,10 +6,10 @@ LDFLAGS = $(LIBS)
 
 .PHONY: run
 
-run: step1
-	./step1
+run: ar
+	./ar
 
-bender: step1.cpp
+bender: ar.cpp
 
 clean:
-	rm step1
+	rm ar
