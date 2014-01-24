@@ -11,6 +11,7 @@ int main(int argc, char** argv) {
     for (;;) {
         cap >> image;
         cv::imshow("image", image);
+        cv::waitKey(1);
     }
 
     return 0;

@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
         Scalar color(0, 255, 0);
         drawContours(image, contours, -1, color);
         cv::imshow("image", image);
+        cv::waitKey(1);
     }
 
     return 0;

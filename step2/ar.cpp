@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
         Mat threshImage;
         threshold(grayImage, threshImage, 128.0, 255.0, THRESH_OTSU);
         cv::imshow("image", threshImage);
+        cv::waitKey(1);
     }
 
     return 0;
