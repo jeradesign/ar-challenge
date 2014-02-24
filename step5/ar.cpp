@@ -8,18 +8,20 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char** argv) {
-    VideoCapture cap(0);
-    if(!cap.isOpened())  // check if we succeeded
-        return -1;
-    
-    FileStorage fs("out_camera_data.xml", FileStorage::READ);
+    FileStorage fs("../calibrate/out_camera_data.xml", FileStorage::READ);
     Mat intrinsics, distortion;
     fs["Camera_Matrix"] >> intrinsics;
     fs["Distortion_Coefficients"] >> distortion;
     
-    cout << "intrinsics: " << intrinsics.rows << ", " << intrinsics.cols << endl;
-    cout << "distortion: " << distortion.rows << ", " << distortion.cols << endl;
+    if (intrinsics.rows != 3 || intrinsics.cols != 3 || distortion.rows != 5 || distortion.cols != 1) {
+        cout << "Run calibration (in ../calibrate/) first!" << endl;
+        return 1;
+    }
 
+    VideoCapture cap(0);
+    if(!cap.isOpened())  // check if we succeeded
+        return -1;
+    
     Mat image;
 
     for (;;) {
