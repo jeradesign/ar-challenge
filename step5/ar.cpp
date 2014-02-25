@@ -7,6 +7,14 @@
 using namespace std;
 using namespace cv;
 
+void drawQuad(Mat image, Mat points, Scalar color) {
+    cout << points.at<Point2f>(0,0) << " " << points.at<Point2f>(0,1) << " " << points.at<Point2f>(0,2) << " " << points.at<Point2f>(0,3) << endl;
+    line(image, points.at<Point2f>(0,0), points.at<Point2f>(0,1), color);
+    line(image, points.at<Point2f>(0,1), points.at<Point2f>(0,2), color);
+    line(image, points.at<Point2f>(0,2), points.at<Point2f>(0,3), color);
+    line(image, points.at<Point2f>(0,3), points.at<Point2f>(0,0), color);
+}
+
 int main(int argc, char** argv) {
     FileStorage fs("../calibrate/out_camera_data.xml", FileStorage::READ);
     Mat intrinsics, distortion;
@@ -35,6 +43,8 @@ int main(int argc, char** argv) {
         vector<vector<Point> > contours;
         findContours(threshImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
         Scalar color(0, 255, 0);
+        // drawContours(image, contours, -1, color);
+
         vector<Mat> squares;
         for (auto contour : contours) {
             vector<Point> approx;
@@ -53,17 +63,19 @@ int main(int argc, char** argv) {
             vector<Point3f> objectPoints = {Point3f(-1, -1, 0), Point3f(-1, 1, 0), Point3f(1, 1, 0), Point3f(1, -1, 0)};
             Mat objectPointsMat(objectPoints);
             cout << "objectPointsMat: " << objectPointsMat.rows << ", " << objectPointsMat.cols << endl;
-            cout << "squares[0]: " << squares[0].size() << endl;
+            cout << "squares[0]: " << squares[0] << endl;
             Mat rvec;
             Mat tvec;
             solvePnP(objectPointsMat, squares[0], intrinsics, distortion, rvec, tvec);
             
-            cout << rvec << endl;
-            cout << tvec << endl;
+            cout << "rvec = " << rvec << endl;
+            cout << "tvec = " << tvec << endl;
+
+            drawQuad(image, squares[0], color);
         }
 
-        // drawContours(image, squares, -1, color);
         cv::imshow("image", image);
+        cv::waitKey(1);
     }
 
     return 0;
