@@ -8,7 +8,7 @@ using namespace std;
 using namespace cv;
 
 void drawQuad(Mat image, Mat points, Scalar color) {
-    cout << points.at<Point2f>(0,0) << " " << points.at<Point2f>(0,1) << " " << points.at<Point2f>(0,2) << " " << points.at<Point2f>(0,3) << endl;
+    // cout << points.at<Point2f>(0,0) << " " << points.at<Point2f>(0,1) << " " << points.at<Point2f>(0,2) << " " << points.at<Point2f>(0,3) << endl;
     line(image, points.at<Point2f>(0,0), points.at<Point2f>(0,1), color);
     line(image, points.at<Point2f>(0,1), points.at<Point2f>(0,2), color);
     line(image, points.at<Point2f>(0,2), points.at<Point2f>(0,3), color);
@@ -16,6 +16,10 @@ void drawQuad(Mat image, Mat points, Scalar color) {
 }
 
 int main(int argc, char** argv) {
+    Scalar red(255, 0, 0);
+    Scalar green(0, 255, 0);
+    Scalar blue(0, 0, 255);
+
     FileStorage fs("../calibrate/out_camera_data.xml", FileStorage::READ);
     Mat intrinsics, distortion;
     fs["Camera_Matrix"] >> intrinsics;
@@ -42,7 +46,6 @@ int main(int argc, char** argv) {
         threshold(blurredImage, threshImage, 128.0, 255.0, THRESH_OTSU);
         vector<vector<Point> > contours;
         findContours(threshImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-        Scalar color(0, 255, 0);
         // drawContours(image, contours, -1, color);
 
         vector<Mat> squares;
@@ -71,7 +74,13 @@ int main(int argc, char** argv) {
             cout << "rvec = " << rvec << endl;
             cout << "tvec = " << tvec << endl;
 
-            drawQuad(image, squares[0], color);
+            drawQuad(image, squares[0], green);
+            
+            vector<Point3f> line3d = {{0, 0, 0}, {0, 0, 1}};
+            vector<Point2f> line2d;
+            projectPoints(line3d, rvec, tvec, intrinsics, distortion, line2d);
+            cout << "line2d = " << line2d << endl;
+            line(image, line2d[0], line2d[1], red);
         }
 
         cv::imshow("image", image);
